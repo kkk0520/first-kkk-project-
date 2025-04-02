@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import './App.css';
+import RockImage from './images/rock.png';
+import ScissorsImage from './images/scissors.png';
+import PaperImage from './images/paper.png';
 import Box from './component/Box';
 
 
@@ -13,36 +16,65 @@ import Box from './component/Box';
 const choice = {
   rock:{
     name:"Rock",
-    img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQt_7ioYr9T6uh35rT46Z_cyNVtMM_SgbHppA&s"
+    img:RockImage
   },
   scissors:{
     name:"Scissors",
-    img:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTO7LPjgUFUbWwESJK-aGZlpWXHd7w3Tpv8-A&s"    
+    img:ScissorsImage   
   },
   paper:{
     name:"Paper",
-    img:"https://i.ebayimg.com/images/g/G5kAAOSwmoRexd9C/s-l1600.webp"
+    img:PaperImage
   }
 }
 function App() {
 
   const [userSelect, setUserSelect] = useState(null)
+  const [computerSelect, setComputerSelect] = useState(null)
+  const [result, setResult] = useState("")
 
   const play=(userChoice)=>{
     setUserSelect(choice[userChoice]);
 
-    console.log("선택됨", userChoice);
+    let computerChoice = randomChoice()
+    setComputerSelect(computerChoice)
+
+    setResult(judgement(choice[userChoice], computerChoice))
+
+  };
+
+  const judgement = (user, computer) => {
+    if(user.name === computer.name){
+      return "TIE"
+    }
+    else if(user.name === "Rock"){
+      return computer.name === "Scissors" ? "WIN" : "LOSE"
+    } else if(user.name === "Scissors") {
+      return computer.name === "Paper" ? "WIN" : "LOSE"
+    } else if(user.name === "Paper") {
+      return computer.name === "Rock" ? "WIN" : "LOSE"
+    }
   }
+
+  const randomChoice = () =>{
+    let itemArray = Object.keys(choice)
+    let randomItem = Math.floor(Math.random() * itemArray.length)
+
+    let final = itemArray[randomItem]
+    return choice[final]
+
+  }
+
   return (
-    <div>
+    <div className="mainBox">
       <div className="main">
-        <Box title="You" item={userSelect}/>
-        {/*<Box title="Computer" />*/}
+        <Box title="You" item={userSelect} result={result}/>
+        <Box title="Computer" item={computerSelect} result={result}/>
       </div>
-      <div className="main">
-        <button onClick={()=>play("scissors")}>가위</button>
-        <button onClick={()=>play("rock")}>바위</button>
-        <button onClick={()=>play("paper")}>보</button>
+      <div className="button">
+        <img onClick={()=>play("scissors")} className="buttonImage" src={ScissorsImage}></img>
+        <img onClick={()=>play("rock")} className="buttonImage" src={RockImage}></img>
+        <img onClick={()=>play("paper")} className="buttonImage" src={PaperImage}></img>
       </div>
     </div>
   );
